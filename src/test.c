@@ -1,5 +1,6 @@
 #include <math.h>
 #include <string.h>
+#include <assert.h>
 #include "image.h"
 #include "test.h"
 #include "args.h"
@@ -183,6 +184,10 @@ void test_convolution(){
 void test_gaussian_filter(){
     image f = make_gaussian_filter(7);
 
+    for(int i = 0; i < f.w * f.h * f.c; i++){
+        f.data[i] *= 100;
+    }
+
     image gt = load_image("figs/gaussian_filter_7.png");
     TEST(same_image(f, gt));    
 }
@@ -237,10 +242,20 @@ void test_sobel(){
 
     image gt_mag = load_image("figs/magnitude.png");
     image gt_theta = load_image("figs/theta.png");
+    int i;
+    for(i = 0; i < gt_mag.w*gt_mag.h; ++i){
+        if(within_eps(gt_mag.data[i], 0)){
+            gt_theta.data[i] = 0;
+            theta.data[i] = 0;
+        }
+        if(within_eps(gt_theta.data[i], 0) || within_eps(gt_theta.data[i], 1)){
+            gt_theta.data[i] = 0;
+            theta.data[i] = 0;
+        }
+    }
 
     TEST(same_image(gt_mag, mag));
     TEST(same_image(gt_theta, theta));
-
 }
 
 
