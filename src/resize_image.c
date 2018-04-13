@@ -11,10 +11,12 @@ image nn_resize(image im, int w, int h)
 {
     image resize = make_image(w, h, im.c);
 
-    float a = (-0.5 - (im.w-0.5))/(-0.5 - (w - 0.5));
+  //  float a = (-0.5 - (im.w-0.5))/(-0.5 - (w - 0.5));
+    float a = (float)im.w/(float) w;
+    float a_y = (float)im.h/(float) h;
     float b = -0.5 + 0.5 * a;
 
-    float a_y = (-0.5 - (im.h-0.5))/(-0.5 - (h - 0.5));
+  //  float a_y = (-0.5 - (im.h-0.5))/(-0.5 - (h - 0.5));
     float b_y = -0.5 + 0.5 * a_y;
 
     int row;
@@ -58,9 +60,15 @@ float bilinear_interpolate(image im, float x, float y, int c)
     int top_y = round_down(y);
     int bottom_y = round_up(y);
 
-    // printf("%f, %f\n", x, y);
-    // printf("x: %f % f\n", left_x, right_x);
-    // printf("y: %f %f\n", up_y, down_y);
+    if(x < 0) {
+        left_x = -1;
+        right_x = 0;
+    }
+
+    if(y < 0) {
+        top_y = -1;
+        bottom_y = 0;
+    }
 
     float v1 = get_pixel(im, left_x, top_y, c);
     float v2 = get_pixel(im, right_x, top_y, c);
@@ -83,10 +91,12 @@ image bilinear_resize(image im, int w, int h)
 {
    image resize = make_image(w, h, im.c);
 
-    float a_x = (-0.5 - (im.w-0.5))/(-0.5 - (w * 1.0 - 0.5));
+    float a_x = (float)im.w/(float) w;
+    float a_y = (float)im.h/(float) h;
+    //float a_x = (-0.5 - (h-0.5))/(-0.5 - (im.h - 0.5));
     float b_x = -0.5 + 0.5 * a_x;
 
-    float a_y = (-0.5 - (im.h-0.5))/(-0.5 - (h * 1.0 - 0.5));
+   // float a_y = (-0.5 - (w-0.5))/(-0.5 - (im.w - 0.5));
     float b_y = -0.5 + 0.5 * a_y;
 
     int row;
